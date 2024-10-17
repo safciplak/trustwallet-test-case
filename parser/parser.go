@@ -78,15 +78,13 @@ func (p *ParserImpl) StartParsing() error {
 			return err
 		}
 
-		for i := p.currentBlock + 1; i <= currentBlockNumber; i++ {
-			err := p.parseBlock(i)
-			if err != nil {
-				fmt.Printf("Error parsing block %d: %v\n", i, err)
-				return err
-			}
-			p.currentBlock = i
-			fmt.Printf("Parsed block %d\n", i)
+		err = p.parseBlock(currentBlockNumber)
+		if err != nil {
+			fmt.Printf("Error parsing block %d: %v\n", currentBlockNumber, err)
+			return err
 		}
+		p.currentBlock = currentBlockNumber
+		fmt.Printf("Parsed block %d\n", currentBlockNumber)
 
 		time.Sleep(5 * time.Second)
 	}
@@ -105,6 +103,7 @@ func (p *ParserImpl) GetCurrentBlockNumber() (int, error) {
 		return 0, err
 	}
 
+	fmt.Printf("respData: %v\n", respData)
 	resultHex, ok := respData["result"].(string)
 	if !ok {
 		return 0, fmt.Errorf("invalid response format")
@@ -114,6 +113,8 @@ func (p *ParserImpl) GetCurrentBlockNumber() (int, error) {
 	if err != nil {
 		return 0, err
 	}
+
+	fmt.Printf("blockNumber: %d\n", blockNumber)
 
 	return int(blockNumber), nil
 }
